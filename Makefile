@@ -8,7 +8,7 @@
 ## Last update Sat Jul  2 21:56:26 2016 David Zeng
 ##
 
-NAME:=		a.out
+NAME:=		libmy_malloc.so
 SRCDIR:=	src/
 INCLUDE:=	include/
 
@@ -27,7 +27,7 @@ CYAN:=		"\033[0;36;1m"
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	$(CC) -o $(NAME) $(OBJ) $(CFLAGS) && \
+	$(CC) -shared -o $(NAME) $(OBJ) $(CFLAGS) && \
 		echo -e $(GREEN)"[BIN]"$(CYAN) $(NAME)$(DEFAULT) || \
 		echo -e $(RED)"[XX]"$(DEFAULT) $(NAME)
 	for file in $(SRC); do fgrep -niH -e TODO -e FIXME $$file; done; true
