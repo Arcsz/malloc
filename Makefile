@@ -12,7 +12,7 @@ NAME:=		a.out
 SRCDIR:=	src/
 INCLUDE:=	include/
 
-SRC:=		src/main.c
+SRC:=		src/test.c
 
 CC:=		gcc
 CFLAGS:=	-W -Wall -Wextra -g
