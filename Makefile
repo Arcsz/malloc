@@ -8,14 +8,16 @@
 ## Last update Sat Jul  2 21:56:26 2016 David Zeng
 ##
 
-NAME:=		a.out
+NAME:=		libmy_malloc.so
 SRCDIR:=	src/
 INCLUDE:=	include/
 
-SRC:=		test.c \
+SRC:=		\
+		test.c \
 
 CC:=		gcc
-CFLAGS:=	-W -Wall -Wextra -g
+CFLAGS:=	-W -Wall -Wextra -g -fPIC
+LDFLAGS:=	-shared
 SRC:=		$(addprefix $(SRCDIR), $(SRC))
 OBJ:=		$(SRC:.c=.o)
 RM:=		rm -f
@@ -28,11 +30,7 @@ CYAN:=		"\033[0;36;1m"
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	$(CC) -o $(NAME) $(OBJ) $(CFLAGS) && \
-		echo -e $(GREEN)"[BIN]"$(CYAN) $(NAME)$(DEFAULT) || \
-		echo -e $(RED)"[XX]"$(DEFAULT) $(NAME)
-	for file in $(SRC); do fgrep -niH -e TODO -e FIXME $$file; done; true
-	[ -e /bin/deep ] && (deep . -score | tail -n 1 | echo -n) || echo -n
+	$(CC) -o $(NAME) $(OBJ) $(CFLAGS) $(LDFLAGS)
 
 clean:
 	echo -e $(CYAN)"Cleaning $(NAME) tmp files..." $(DEFAULT)

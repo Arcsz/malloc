@@ -13,13 +13,10 @@
 #include <unistd.h>
 #include <string.h>
 
+void	my_putstr(char *str);
+
 int	main(int argc, char *argv[])
 {
-  char	*str;
-
-  str = sbrk(0);
-  printf("%d\n", brk(str + 6));
-  strcpy(str, "hello");
-  printf("%s\n", str);
+  my_putstr("test");
   return (0);
 }
