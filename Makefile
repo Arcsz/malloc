@@ -12,10 +12,11 @@ NAME:=		a.out
 SRCDIR:=	src/
 INCLUDE:=	include/
 
-SRC:=		src/test.c
+SRC:=		test.c \
 
 CC:=		gcc
 CFLAGS:=	-W -Wall -Wextra -g
+SRC:=		$(addprefix $(SRCDIR), $(SRC))
 OBJ:=		$(SRC:.c=.o)
 RM:=		rm -f
 

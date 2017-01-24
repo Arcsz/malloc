@@ -8,10 +8,9 @@
 ** Last update Mon Jan 23 17:57:49 2017 David Zeng
 */
 
-
+#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <stdio.h>
 #include <string.h>
 
 int	main(int argc, char *argv[])
