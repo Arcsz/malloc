@@ -28,7 +28,7 @@ CYAN:=		"\033[0;36;1m"
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	$(CC) -shared -o $(NAME) $(OBJ) $(CFLAGS) && \
+	$(CC) -shared -mcmodel=large -o $(NAME) $(OBJ) $(CFLAGS) && \
 		echo -e $(GREEN)"[BIN]"$(CYAN) $(NAME)$(DEFAULT) || \
 		echo -e $(RED)"[XX]"$(DEFAULT) $(NAME)
 	for file in $(SRC); do fgrep -niH -e TODO -e FIXME $$file; done; true
