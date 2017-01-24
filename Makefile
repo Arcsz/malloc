@@ -12,10 +12,12 @@ NAME:=		libmy_malloc.so
 SRCDIR:=	src/
 INCLUDE:=	include/
 
-SRC:=		test.c \
+SRC:=		\
+		test.c \
 
 CC:=		gcc
-CFLAGS:=	-W -Wall -Wextra -g
+CFLAGS:=	-W -Wall -Wextra -g -fPIC
+LDFLAGS:=	-shared
 SRC:=		$(addprefix $(SRCDIR), $(SRC))
 OBJ:=		$(SRC:.c=.o)
 RM:=		rm -f
@@ -28,7 +30,7 @@ CYAN:=		"\033[0;36;1m"
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	$(CC) -shared -mcmodel=large -o $(NAME) $(OBJ) $(CFLAGS) && \
+	$(CC) -o $(NAME) $(OBJ) $(CFLAGS) $(LDFLAGS) && \
 		echo -e $(GREEN)"[BIN]"$(CYAN) $(NAME)$(DEFAULT) || \
 		echo -e $(RED)"[XX]"$(DEFAULT) $(NAME)
 	for file in $(SRC); do fgrep -niH -e TODO -e FIXME $$file; done; true
