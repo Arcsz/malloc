@@ -45,14 +45,10 @@ static void	*get_new_block(size_t size)
   t_node	*block;
 
   block = create_block(size);
-  if (!block)
+  if (!block || !push_back(&allocated_blocks, block))
     return (NULL);
-  if (push_back(&allocated_blocks, block))
-    {
-      // add sizeof(t_node) to block with + 1
-      return (block + 1);
-    }
-  return (NULL);
+  // add sizeof(t_node) to block with + 1
+  return (block + 1);
 }
 
 /**
@@ -60,12 +56,12 @@ static void	*get_new_block(size_t size)
  */
 void	*malloc(size_t size)
 {
-  write(1, "yo", 2);
   void	*ptr;
 
   // check if size is okay
   if (size == 0)
     return (NULL);
+  size = (size + 3) & ~3;
   // lock thread
   pthread_mutex_lock(&lock);
   // get block from free list or new one
@@ -74,6 +70,5 @@ void	*malloc(size_t size)
     ptr = get_new_block(size);
   // unlock thread
   pthread_mutex_unlock(&lock);
-  printf("%ld\n", (long int)ptr);
   return (ptr);
 }

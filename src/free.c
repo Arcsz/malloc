@@ -22,10 +22,10 @@ void		free(void *ptr)
 
   if (ptr)
     {
-      /* pthread_mutex_lock(&lock); */
+      pthread_mutex_lock(&lock);
       node = ptr_to_block(ptr);
       assert(node->is_free == false);
       node->is_free = true;
-      /* pthread_mutex_unlock(&lock); */
+      pthread_mutex_unlock(&lock);
     }
 }
