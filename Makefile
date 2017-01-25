@@ -13,10 +13,14 @@ SRCDIR:=	src/
 INCLUDE:=	include/
 
 SRC:=		\
-		test.c \
+		malloc.c \
+		realloc.c \
+		calloc.c \
+		free.c \
+		list.c \
 
 CC:=		gcc
-CFLAGS:=	-W -Wall -Wextra -g -fPIC
+CFLAGS:=	-W -Wall -Wextra -g -fPIC -pthread
 LDFLAGS:=	-shared
 SRC:=		$(addprefix $(SRCDIR), $(SRC))
 OBJ:=		$(SRC:.c=.o)
@@ -33,7 +37,7 @@ $(NAME): $(OBJ)
 	$(CC) -o $(NAME) $(OBJ) $(CFLAGS) $(LDFLAGS) && \
 		echo -e $(GREEN)"[BIN]"$(CYAN) $(NAME)$(DEFAULT) || \
 		echo -e $(RED)"[XX]"$(DEFAULT) $(NAME)
-	for file in $(SRC); do fgrep -niH -e TODO -e FIXME $$file; done; true
+	for file in $(SRC); do fgrep -niH -e TODO -e FIXME $$file --color=auto; done; true
 	[ -e /bin/deep ] && (deep . -score | tail -n 1 | echo -n) || echo -n
 
 clean:
@@ -51,6 +55,6 @@ re: fclean all
 .SILENT: all $(NAME) clean fclean re
 
 .c.o:
-	@$(CC) -c $< -o $@ $(CFLAGS) $(foreach dir, $(INCLUDE), -I$dir) && \
+	@$(CC) -c $< -o $@ $(CFLAGS) $(foreach dir, $(INCLUDE), -I$(dir)) && \
 		echo -e $(GREEN)"[OK]"$(DEFAULT) $< || \
 		echo -e $(RED)"[KO]"$(DEFAULT) $<
