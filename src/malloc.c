@@ -17,18 +17,18 @@ pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 
 // TODO REMOVE COMMENTS
 
-static void	split_block(t_node *block, size_t block_real_size)
+static void	split_block(t_node *block, size_t size)
 {
   t_node	*new_block;
 
   //get new block address
-  new_block = (t_node*)((char*)(block + 1) + block_real_size + MIN_BLOCK_SIZE);
-  new_block->size = block->size - block_real_size;
+  new_block = (t_node*)((char*)(block + 1) + size);
+  new_block->size = block->size - size - HEADER_SIZE;
   new_block->is_free = true;
   new_block->next = block->next;
   new_block->prev = block;
   //set current block to real size
-  block->size = block_real_size;
+  block->size = size;
   block->next = new_block;
   // TODO ADD TO FREE LIST
 }
