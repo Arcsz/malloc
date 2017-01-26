@@ -10,10 +10,8 @@
 
 #include "malloc.h"
 
-bool	push_back(t_list *list, t_node *block)
+void	push_back(t_list *list, t_node *block)
 {
-  if (!block)
-    return (false);
   if (!list->head)
     {
       list->head = block;
@@ -25,5 +23,4 @@ bool	push_back(t_list *list, t_node *block)
       block->prev = list->last;
       list->last = block;
     }
-  return (true);
 }

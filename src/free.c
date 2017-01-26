@@ -11,11 +11,6 @@
 #include <stdio.h>
 #include "malloc.h"
 
-t_node	*ptr_to_block(void *ptr)
-{
-  return ((t_node*)ptr - 1);
-}
-
 // MERGE BLOCKS
 void		free(void *ptr)
 {

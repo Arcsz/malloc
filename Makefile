@@ -18,6 +18,7 @@ SRC:=		\
 		calloc.c \
 		free.c \
 		list.c \
+		utils.c \
 
 CC:=		gcc
 CFLAGS:=	-W -Wall -Wextra -g -fPIC -pthread

@@ -56,6 +56,34 @@ static void	*get_free_block(size_t size)
   return (NULL);
 }
 
+static void	*get_internal_memory(size_t size)
+{
+  static size_t	page_size = 0;
+  static size_t	cur_size = 0;
+  static void	*cur_ptr = NULL;
+  int		i;
+
+  if (!allocated_blocks.head)
+    {
+      page_size = getpagesize() * PAGE_NUMBER;
+      cur_size = page_size;
+      cur_ptr = sbrk(cur_size);
+      if (cur_ptr == SBRK_FAILED)
+	return (NULL);
+    }
+  i = 0;
+  while (cur_size < size)
+    {
+      ++i;
+      cur_size += page_size;
+    }
+  if (sbrk(page_size * i) == SBRK_FAILED)
+    return (NULL);
+  cur_size -= size;
+  cur_ptr = (char*)cur_ptr + size;
+  return ((char*)cur_ptr - size);
+}
+
 /**
  * Create a new block and add it to allocated_blocks
  */
@@ -63,16 +91,15 @@ static void	*get_new_block(size_t size)
 {
   t_node	*block;
 
-  // increment break with size + meta
-  block = sbrk(size + sizeof(t_node));
-  if (block == SBRK_FAILED)
+  // get memory by pages
+  block = get_internal_memory(size + HEADER_SIZE);
+  if (!block)
     return (NULL);
   block->size = size;
   block->is_free = false;
   block->next = NULL;
   block->prev = NULL;
-  if (!block || !push_back(&allocated_blocks, block))
-    return (NULL);
+  push_back(&allocated_blocks, block);
   // add sizeof(t_node) to block with + 1
   return (block + 1);
 }

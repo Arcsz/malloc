@@ -20,7 +20,8 @@
 
 # define HEADER_SIZE sizeof(t_node)
 # define SBRK_FAILED (void*)-1
-# define MIN_BLOCK_SIZE 4
+# define MIN_BLOCK_SIZE 128
+# define PAGE_NUMBER 32
 
 typedef struct		s_node
 {
@@ -44,6 +45,6 @@ void			show_alloc_mem();
 t_node			*ptr_to_block(void *ptr);
 
 //lists functions
-bool			push_back(t_list *list, t_node *block);
+void			push_back(t_list *list, t_node *block);
 
 #endif /* !MALLOC_H_ */
