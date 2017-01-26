@@ -15,11 +15,13 @@
 
 int	main(int argc, char *argv[])
 {
-  char	*test = calloc(7, sizeof(char));
-  strcpy(test, "hello");
-  test = realloc(test, 10);
-  strcat(test, "AB");
-  write(1, test, 8);
-  free(test);
+  void *test1 = malloc(100);
+  void *test2 = malloc(100);
+  void *test3 = malloc(100);
+  free(test2);
+  void *test4 = malloc(10);
+  free(test1);
+  free(test3);
+  free(test4);
   return (0);
 }

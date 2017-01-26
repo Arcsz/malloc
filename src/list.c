@@ -10,21 +10,6 @@
 
 #include "malloc.h"
 
-void		*create_block(size_t size)
-{
-  t_node	*ptr;
-
-  // increment break with size + meta
-  ptr = sbrk(size + sizeof(t_node));
-  if (ptr == (void*)-1)
-    return (NULL);
-  ptr->size = size;
-  ptr->is_free = false;
-  ptr->next = NULL;
-  /* ptr->prev = NULL; */
-  return (ptr);
-}
-
 bool	push_back(t_list *list, t_node *block)
 {
   if (!block)
@@ -37,7 +22,7 @@ bool	push_back(t_list *list, t_node *block)
   else
     {
       list->last->next = block;
-      /* block->prev = list->last; */
+      block->prev = list->last;
       list->last = block;
     }
   return (true);
