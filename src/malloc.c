@@ -11,9 +11,11 @@
 #include <stdio.h>
 #include "malloc.h"
 
-t_list allocated_blocks = {NULL, NULL};
-/* t_list free_blocks = {NULL, NULL}; */
-pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+t_node		*free_blocks = NULL;
+pthread_mutex_t	lock = PTHREAD_MUTEX_INITIALIZER;
+
+t_node *last = NULL;
+t_node *head = NULL;
 
 // TODO REMOVE COMMENTS
 
@@ -25,11 +27,9 @@ static void	split_block(t_node *block, size_t size)
   new_block = (t_node*)((char*)(block + 1) + size);
   new_block->size = block->size - size - HEADER_SIZE;
   new_block->is_free = true;
-  new_block->next = block->next;
-  new_block->prev = block;
+  new_block->next = NULL;
   //set current block to real size
   block->size = size;
-  block->next = new_block;
   // TODO ADD TO FREE LIST
 }
 
@@ -40,7 +40,7 @@ static void	*get_free_block(size_t size)
 {
   t_node	*node;
 
-  node = allocated_blocks.head;
+  node = head;
   while (node)
     {
       if (node->is_free && node->size >= size)
@@ -51,7 +51,9 @@ static void	*get_free_block(size_t size)
 	  node->is_free = false;
 	  return (node + 1);
 	}
-      node = node->next;
+      if (node == last)
+	return (NULL);
+      node = (t_node*)((char*)(node + 1) + node->size);
     }
   return (NULL);
 }
@@ -61,24 +63,21 @@ static void	*get_internal_memory(size_t size)
   static size_t	page_size = 0;
   static size_t	cur_size = 0;
   static void	*cur_ptr = NULL;
-  int		i;
+  size_t	old_size;
 
-  if (!allocated_blocks.head)
+  if (!head)
+    page_size = getpagesize() * PAGE_NUMBER;
+  if (cur_size < size)
     {
-      page_size = getpagesize() * PAGE_NUMBER;
-      cur_size = page_size;
-      cur_ptr = sbrk(cur_size);
-      if (cur_ptr == SBRK_FAILED)
+      old_size = cur_size;
+      while (cur_size < size)
+	cur_size += page_size;
+      old_size = cur_size - old_size;
+      if (!cur_ptr && (cur_ptr = sbrk(old_size)) == SBRK_FAILED)
+	return (NULL);
+      else if (sbrk(old_size) == SBRK_FAILED)
 	return (NULL);
     }
-  i = 0;
-  while (cur_size < size)
-    {
-      ++i;
-      cur_size += page_size;
-    }
-  if (sbrk(page_size * i) == SBRK_FAILED)
-    return (NULL);
   cur_size -= size;
   cur_ptr = (char*)cur_ptr + size;
   return ((char*)cur_ptr - size);
@@ -95,11 +94,13 @@ static void	*get_new_block(size_t size)
   block = get_internal_memory(size + HEADER_SIZE);
   if (!block)
     return (NULL);
+  if (!head)
+    head = block;
   block->size = size;
   block->is_free = false;
   block->next = NULL;
   block->prev = NULL;
-  push_back(&allocated_blocks, block);
+  last = block;
   // add sizeof(t_node) to block with + 1
   return (block + 1);
 }

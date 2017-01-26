@@ -10,17 +10,17 @@
 
 #include "malloc.h"
 
-void	push_back(t_list *list, t_node *block)
-{
-  if (!list->head)
-    {
-      list->head = block;
-      list->last = block;
-    }
-  else
-    {
-      list->last->next = block;
-      block->prev = list->last;
-      list->last = block;
-    }
-}
+/* void	push_back(t_list *list, t_node *block) */
+/* { */
+/*   if (!list->head) */
+/*     { */
+/*       list->head = block; */
+/*       list->last = block; */
+/*     } */
+/*   else */
+/*     { */
+/*       list->last->next = block; */
+/*       block->prev = list->last; */
+/*       list->last = block; */
+/*     } */
+/* } */

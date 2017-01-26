@@ -11,17 +11,37 @@
 #include <stdio.h>
 #include "malloc.h"
 
-// MERGE BLOCKS
+/**
+ * Merge freed block
+ */
+/* void		merge_free_blocks(t_node *block) */
+/* { */
+
+/* } */
+
+/* void		insert_sort(t_node *block) */
+/* { */
+/*   t_node	*node; */
+
+/*   node = free_blocks; */
+/*   while (node) */
+/*     { */
+
+/*       node = node->next; */
+/*     } */
+/* } */
+
 void		free(void *ptr)
 {
-  t_node	*node;
+  t_node	*block;
 
   if (ptr)
     {
       pthread_mutex_lock(&lock);
-      node = ptr_to_block(ptr);
-      assert(node->is_free == false);
-      node->is_free = true;
+
+      block = ptr_to_block(ptr);
+      block->is_free = true;
+
       pthread_mutex_unlock(&lock);
     }
 }

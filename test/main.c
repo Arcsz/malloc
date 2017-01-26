@@ -17,8 +17,8 @@ extern char etext, edata, end;
 
 int	main(int argc, char *argv[])
 {
-malloc(1000);
-printf("%d\n", etext);
+  malloc(1000);
+  printf("%d\n", etext);
   printf("%d\n", edata);
   printf("%d\n", end);
   return (0);
