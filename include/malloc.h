@@ -19,7 +19,7 @@
 
 # define HEADER_SIZE sizeof(t_node)
 # define SBRK_FAILED (void*)-1
-# define MIN_BLOCK_SIZE 128
+# define MIN_BLOCK_SIZE 64
 # define PAGE_NUMBER 32
 
 typedef struct		s_node
@@ -32,9 +32,12 @@ typedef struct		s_node
 
 extern t_node		*free_blocks;
 extern pthread_mutex_t	lock;
+extern t_node		*head;
+extern t_node		*last;
 
 void			show_alloc_mem();
 t_node			*ptr_to_block(void *ptr);
+t_node			*get_block_at(t_node *block, size_t size);
 
 //lists functions
 /* void			push_back(t_list *list, t_node *block); */

@@ -17,7 +17,6 @@ SRC:=		\
 		realloc.c \
 		calloc.c \
 		free.c \
-		list.c \
 		utils.c \
 
 CC:=		gcc

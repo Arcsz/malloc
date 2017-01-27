@@ -11,11 +11,10 @@
 #include <stdio.h>
 #include "malloc.h"
 
-t_node		*free_blocks = NULL;
 pthread_mutex_t	lock = PTHREAD_MUTEX_INITIALIZER;
-
-t_node *last = NULL;
-t_node *head = NULL;
+t_node		*head = NULL;
+t_node		*last = NULL;
+t_node		*free_blocks = NULL;
 
 // TODO REMOVE COMMENTS
 
@@ -24,13 +23,20 @@ static void	split_block(t_node *block, size_t size)
   t_node	*new_block;
 
   //get new block address
-  new_block = (t_node*)((char*)(block + 1) + size);
+  new_block = get_block_at(block, size);
   new_block->size = block->size - size - HEADER_SIZE;
   new_block->is_free = true;
-  new_block->next = NULL;
+  new_block->next = block->next;
+  new_block->prev = block->prev;
+  if (block->prev)
+    block->prev->next = new_block;
+  if (block->next)
+    block->next->prev = new_block;
+  if (block == free_blocks)
+    free_blocks = new_block;
   //set current block to real size
   block->size = size;
-  // TODO ADD TO FREE LIST
+  block->is_free = false;
 }
 
 /**
@@ -40,7 +46,7 @@ static void	*get_free_block(size_t size)
 {
   t_node	*node;
 
-  node = head;
+  node = free_blocks;
   while (node)
     {
       if (node->is_free && node->size >= size)
@@ -48,12 +54,19 @@ static void	*get_free_block(size_t size)
 	  // split block
 	  if (node->size - size >= HEADER_SIZE + MIN_BLOCK_SIZE)
 	    split_block(node, size);
-	  node->is_free = false;
+	  else
+	    {
+	      node->is_free = false;
+	      if (node->prev)
+	      	node->prev->next = node->next;
+	      if (node->next)
+	      	node->next->prev = node->prev;
+	      if (node == free_blocks)
+		free_blocks = NULL;
+	    }
 	  return (node + 1);
 	}
-      if (node == last)
-	return (NULL);
-      node = (t_node*)((char*)(node + 1) + node->size);
+      node = node->next;
     }
   return (NULL);
 }
@@ -112,6 +125,11 @@ void	*malloc(size_t size)
 {
   void	*ptr;
 
+  if ((int)size < 0)
+    {
+      //printf("%i\n", (int)size);
+      return (NULL);
+    }
   // check if size is okay
   if (size == 0)
     return (NULL);

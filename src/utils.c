@@ -14,3 +14,8 @@ t_node	*ptr_to_block(void *ptr)
 {
   return ((t_node*)ptr - 1);
 }
+
+t_node		*get_block_at(t_node *block, size_t size)
+{
+  return ((t_node*)((char*)(block + 1) + size));
+}
