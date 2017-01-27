@@ -10,11 +10,28 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "../include/malloc.h"
 
-int	main(int argc, char *argv[])
+int     main()
 {
-  void *test = malloc(-1);
-  printf("%p\n", test);
-  printf("%lu\n", (size_t)-1);
-  return (0);
+  void *tab[100];
+  int i;
+  int j;
+  int size;
+
+  for (i = 0; i < 100; i++)
+    tab[i] = NULL;
+  for (i = 0; i < 1000; i++) {
+    j = rand() % 100;
+    if (tab[j] == NULL) {
+      tab[j] = malloc(size = rand() % 1000);
+      printf("malloc : tab[%d] <- %d\n", j, size);
+    } else {
+      printf("free : tab[%d]\n", j);
+      free(tab[j]);
+      tab[j] = NULL;
+    }
+  }
+  /* show_alloc_mem(); */
+  return 0;
 }

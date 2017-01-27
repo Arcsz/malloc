@@ -125,13 +125,8 @@ void	*malloc(size_t size)
 {
   void	*ptr;
 
-  if ((int)size < 0)
-    {
-      //printf("%i\n", (int)size);
-      return (NULL);
-    }
   // check if size is okay
-  if (size == 0)
+  if ((int)size <= 0)
     return (NULL);
   // get next power of 2
   size = (size + 3) & ~3;
