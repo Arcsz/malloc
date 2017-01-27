@@ -32,6 +32,6 @@ int     main()
       tab[j] = NULL;
     }
   }
-  /* show_alloc_mem(); */
+  show_alloc_mem();
   return 0;
 }
