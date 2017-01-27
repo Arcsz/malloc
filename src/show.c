@@ -13,13 +13,11 @@
 
 void		show_alloc_mem()
 {
-  void		*break_ptr;
   void		*cur_ptr;
   void		*start_block;
   unsigned int	cur_size;
 
-  break_ptr = sbrk(0);
-  printf("break : %p\n", break_ptr);
+  printf("break : %p\n", sbrk(0));
   if (head)
     {
       cur_ptr = head;
