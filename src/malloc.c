@@ -73,18 +73,22 @@ static void	*get_free_block(size_t size)
 
 static void	*get_internal_memory(size_t size)
 {
-  static size_t	page_size = 0;
+  static size_t	page_nb = PAGE_NUMBER;
   static size_t	cur_size = 0;
   static void	*cur_ptr = NULL;
   size_t	old_size;
 
-  if (!head)
-    page_size = getpagesize() * PAGE_NUMBER;
+  if (cur_ptr + cur_size != sbrk(0))
+    {
+      cur_ptr = sbrk(0);
+      cur_size = 0;
+    }
   if (cur_size < size)
     {
       old_size = cur_size;
       while (cur_size < size)
-	cur_size += page_size;
+	cur_size += getpagesize() * page_nb;
+      page_nb = (page_nb >= PAGE_MAX) ? page_nb : page_nb * 2;
       old_size = cur_size - old_size;
       if (!cur_ptr && (cur_ptr = sbrk(old_size)) == SBRK_FAILED)
 	return (NULL);

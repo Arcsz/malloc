@@ -10,8 +10,6 @@
 
 #include "malloc.h"
 
-//TODO REMOVE CALLOC
-
 void	*calloc(size_t nmemb, size_t size)
 {
   void	*ptr;
