@@ -19,7 +19,7 @@
 
 # define HEADER_SIZE sizeof(t_node)
 # define SBRK_FAILED (void*)-1
-# define MIN_BLOCK_SIZE 64
+# define MIN_BLOCK_SIZE 4
 # define PAGE_NUMBER 32
 
 typedef struct		s_node

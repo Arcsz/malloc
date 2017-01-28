@@ -13,29 +13,20 @@
 
 void		show_alloc_mem()
 {
-  void		*cur_ptr;
-  void		*start_block;
-  unsigned int	cur_size;
+  t_node	*cur_ptr;
 
   printf("break : %p\n", sbrk(0));
   if (head)
     {
       cur_ptr = head;
-      while (cur_ptr != last)
+      while (cur_ptr != get_block_at(last, last->size))
 	{
-	  cur_size = ((t_node *)cur_ptr)->size;
-	  if (!((t_node *)cur_ptr)->is_free)
-	    {
-	      cur_ptr = (t_node *)cur_ptr + 1;
-	      start_block = cur_ptr;
-	      cur_ptr = (char *)cur_ptr + cur_size;
-	      printf("%p - %p : %u bytes\n", start_block, cur_ptr, cur_size);
-	    }
-	  else
-	    {
-	      cur_ptr = (t_node *)cur_ptr + 1;
-	      cur_ptr = (char *)cur_ptr + cur_size;
-	    }
+	  if (!cur_ptr->is_free)
+	    printf("%p - %p : %lu bytes\n",
+		   cur_ptr + 1,
+		   get_block_at(cur_ptr, cur_ptr->size),
+		   cur_ptr->size);
+	  cur_ptr = get_block_at(cur_ptr, cur_ptr->size);
 	}
     }
 }
