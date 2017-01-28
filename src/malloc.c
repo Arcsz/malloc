@@ -11,18 +11,15 @@
 #include <stdio.h>
 #include "malloc.h"
 
-pthread_mutex_t	lock = PTHREAD_MUTEX_INITIALIZER;
-t_node		*head = NULL;
-t_node		*last = NULL;
-t_node		*free_blocks = NULL;
-
-// TODO REMOVE COMMENTS
+pthread_mutex_t	g_lock = PTHREAD_MUTEX_INITIALIZER;
+t_node		*g_head = NULL;
+t_node		*g_last = NULL;
+t_node		*g_free_blocks = NULL;
 
 static void	split_block(t_node *block, size_t size)
 {
   t_node	*new_block;
 
-  //get new block address
   new_block = get_block_at(block, size);
   new_block->size = block->size - size - HEADER_SIZE;
   new_block->is_free = true;
@@ -32,26 +29,21 @@ static void	split_block(t_node *block, size_t size)
     block->prev->next = new_block;
   if (block->next)
     block->next->prev = new_block;
-  if (block == free_blocks)
-    free_blocks = new_block;
-  //set current block to real size
+  if (block == g_free_blocks)
+    g_free_blocks = new_block;
   block->size = size;
   block->is_free = false;
 }
 
-/**
- * Get a block from free_blocks
- */
 static void	*get_free_block(size_t size)
 {
   t_node	*node;
 
-  node = free_blocks;
+  node = g_free_blocks;
   while (node)
     {
       if (node->is_free && node->size >= size)
 	{
-	  // split block
 	  if (node->size - size >= HEADER_SIZE + MIN_BLOCK_SIZE)
 	    split_block(node, size);
 	  else
@@ -61,8 +53,8 @@ static void	*get_free_block(size_t size)
 	      	node->prev->next = node->next;
 	      if (node->next)
 	      	node->next->prev = node->prev;
-	      if (node == free_blocks)
-		free_blocks = NULL;
+	      if (node == g_free_blocks)
+		g_free_blocks = NULL;
 	    }
 	  return (node + 1);
 	}
@@ -100,47 +92,34 @@ static void	*get_internal_memory(size_t size)
   return ((char*)cur_ptr - size);
 }
 
-/**
- * Create a new block and add it to allocated_blocks
- */
 static void	*get_new_block(size_t size)
 {
   t_node	*block;
 
-  // get memory by pages
   block = get_internal_memory(size + HEADER_SIZE);
   if (!block)
     return (NULL);
-  if (!head)
-    head = block;
+  if (!g_head)
+    g_head = block;
   block->size = size;
   block->is_free = false;
   block->next = NULL;
   block->prev = NULL;
-  last = block;
-  // add sizeof(t_node) to block with + 1
+  g_last = block;
   return (block + 1);
 }
 
-/**
- * Malloc function
- */
 void	*malloc(size_t size)
 {
   void	*ptr;
 
-  // check if size is okay
   if ((int)size <= 0)
     return (NULL);
-  // get next power of 2
   size = (size + 3) & ~3;
-  // lock thread
-  pthread_mutex_lock(&lock);
-  // get block from free list or new one
+  pthread_mutex_lock(&g_lock);
   ptr = get_free_block(size);
   if (!ptr)
     ptr = get_new_block(size);
-  // unlock thread
-  pthread_mutex_unlock(&lock);
+  pthread_mutex_unlock(&g_lock);
   return (ptr);
 }

@@ -31,10 +31,10 @@ typedef struct		s_node
   bool			is_free;
 }			t_node;
 
-extern t_node		*free_blocks;
-extern pthread_mutex_t	lock;
-extern t_node		*head;
-extern t_node		*last;
+extern pthread_mutex_t	g_lock;
+extern t_node		*g_free_blocks;
+extern t_node		*g_head;
+extern t_node		*g_last;
 
 void			show_alloc_mem();
 t_node			*ptr_to_block(void *ptr);

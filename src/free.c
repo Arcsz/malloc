@@ -11,9 +11,6 @@
 #include <stdio.h>
 #include "malloc.h"
 
-/**
- * Merge freed block
- */
 static void	merge_free_blocks(t_node *block)
 {
   if (block->prev && block->prev->is_free &&
@@ -39,16 +36,16 @@ static void	insert_sort(t_node *block)
 {
   t_node	*node;
 
-  if (!free_blocks || free_blocks > block)
+  if (!g_free_blocks || g_free_blocks > block)
     {
-      block->next = free_blocks;
+      block->next = g_free_blocks;
       block->prev = NULL;
-      if (free_blocks)
-	free_blocks->prev = block;
-      free_blocks = block;
+      if (g_free_blocks)
+	g_free_blocks->prev = block;
+      g_free_blocks = block;
       return;
     }
-  node = free_blocks;
+  node = g_free_blocks;
   while (node->next && node->next < block)
     node = node->next;
   block->next = node->next;
@@ -64,11 +61,11 @@ void		free(void *ptr)
 
   if (ptr)
     {
-      pthread_mutex_lock(&lock);
+      pthread_mutex_lock(&g_lock);
       block = ptr_to_block(ptr);
       insert_sort(block);
       merge_free_blocks(block);
       block->is_free = true;
-      pthread_mutex_unlock(&lock);
+      pthread_mutex_unlock(&g_lock);
     }
 }

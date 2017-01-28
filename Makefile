@@ -18,10 +18,9 @@ SRC:=		\
 		calloc.c \
 		free.c \
 		utils.c \
-		show.c \
 
 CC:=		gcc
-CFLAGS:=	-W -Wall -Wextra -g -fPIC -pthread
+CFLAGS:=	-W -Wall -Wextra -fPIC -pthread
 LDFLAGS:=	-shared
 SRC:=		$(addprefix $(SRCDIR), $(SRC))
 OBJ:=		$(SRC:.c=.o)
@@ -39,7 +38,6 @@ $(NAME): $(OBJ)
 		echo -e $(GREEN)"[BIN]"$(CYAN) $(NAME)$(DEFAULT) || \
 		echo -e $(RED)"[XX]"$(DEFAULT) $(NAME)
 	for file in $(SRC); do fgrep -niH -e TODO -e FIXME $$file --color=auto; done; true
-	[ -e /bin/deep ] && (deep . -score | tail -n 1 | echo -n) || echo -n
 
 clean:
 	echo -e $(CYAN)"Cleaning $(NAME) tmp files..." $(DEFAULT)
