@@ -28,7 +28,6 @@ typedef struct		s_node
   size_t		size;
   struct s_node		*next;
   struct s_node		*prev;
-  bool			is_free;
 }			t_node;
 
 extern pthread_mutex_t	g_lock;
@@ -39,5 +38,6 @@ extern t_node		*g_last;
 void			show_alloc_mem();
 t_node			*ptr_to_block(void *ptr);
 t_node			*get_block_at(t_node *block, size_t size);
+size_t			next_pow2(size_t size);
 
 #endif /* !MALLOC_H_ */

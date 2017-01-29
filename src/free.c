@@ -13,8 +13,7 @@
 
 static void	merge_free_blocks(t_node *block)
 {
-  if (block->prev && block->prev->is_free &&
-      get_block_at(block->prev, block->prev->size) == block)
+  if (block->prev && get_block_at(block->prev, block->prev->size) == block)
     {
       block->prev->size += HEADER_SIZE + block->size;
       block->prev->next = block->next;
@@ -22,8 +21,7 @@ static void	merge_free_blocks(t_node *block)
 	block->next->prev = block->prev;
       block = block->prev;
     }
-  if (block->next && block->next->is_free &&
-      get_block_at(block, block->size) == block->next)
+  if (block->next && get_block_at(block, block->size) == block->next)
     {
       block->size += HEADER_SIZE + block->next->size;
       if (block->next->next)
@@ -65,7 +63,6 @@ void		free(void *ptr)
       block = ptr_to_block(ptr);
       insert_sort(block);
       merge_free_blocks(block);
-      block->is_free = true;
       pthread_mutex_unlock(&g_lock);
     }
 }

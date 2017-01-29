@@ -22,7 +22,6 @@ static void	split_block(t_node *block, size_t size)
 
   new_block = get_block_at(block, size);
   new_block->size = block->size - size - HEADER_SIZE;
-  new_block->is_free = true;
   new_block->next = block->next;
   new_block->prev = block->prev;
   if (block->prev)
@@ -32,7 +31,6 @@ static void	split_block(t_node *block, size_t size)
   if (block == g_free_blocks)
     g_free_blocks = new_block;
   block->size = size;
-  block->is_free = false;
 }
 
 static void	*get_free_block(size_t size)
@@ -42,13 +40,12 @@ static void	*get_free_block(size_t size)
   node = g_free_blocks;
   while (node)
     {
-      if (node->is_free && node->size >= size)
+      if (node->size >= size)
 	{
 	  if (node->size - size >= HEADER_SIZE + MIN_BLOCK_SIZE)
 	    split_block(node, size);
 	  else
 	    {
-	      node->is_free = false;
 	      if (node->prev)
 	      	node->prev->next = node->next;
 	      if (node->next)
@@ -102,7 +99,6 @@ static void	*get_new_block(size_t size)
   if (!g_head)
     g_head = block;
   block->size = size;
-  block->is_free = false;
   block->next = NULL;
   block->prev = NULL;
   g_last = block;
@@ -115,7 +111,7 @@ void	*malloc(size_t size)
 
   if ((int)size <= 0)
     return (NULL);
-  size = (size + 3) & ~3;
+  size = next_pow2(size);
   pthread_mutex_lock(&g_lock);
   ptr = get_free_block(size);
   if (!ptr)
