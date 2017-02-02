@@ -14,7 +14,8 @@ void	*calloc(size_t nmemb, size_t size)
 {
   void	*ptr;
 
-  ptr = malloc(size * nmemb);
-  memset(ptr, 0, size * nmemb);
+  if ((ptr = malloc(size * nmemb))) {
+    memset(ptr, 0, size * nmemb);
+  }
   return (ptr);
 }
