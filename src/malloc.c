@@ -109,8 +109,8 @@ void	*malloc(size_t size)
 {
   void	*ptr;
 
-  if ((int)size <= 0)
-    return (NULL);
+  /* if ((int)size <= 0) */
+  /*   return (NULL); */
   size = next_pow2(size);
   pthread_mutex_lock(&g_lock);
   ptr = get_free_block(size);
