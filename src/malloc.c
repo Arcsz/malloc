@@ -24,6 +24,7 @@ static void	split_block(t_node *block, size_t size)
   new_block->size = block->size - size - HEADER_SIZE;
   new_block->next = block->next;
   new_block->prev = block->prev;
+  new_block->is_free = true;
   if (block->prev)
     block->prev->next = new_block;
   if (block->next)
@@ -53,6 +54,7 @@ static void	*get_free_block(size_t size)
 	      if (node == g_free_blocks)
 		g_free_blocks = NULL;
 	    }
+	  node->is_free = false;
 	  return (node + 1);
 	}
       node = node->next;
@@ -101,6 +103,7 @@ static void	*get_new_block(size_t size)
   block->size = size;
   block->next = NULL;
   block->prev = NULL;
+  block->is_free = false;
   g_last = block;
   return (block + 1);
 }

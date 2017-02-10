@@ -61,6 +61,7 @@ void		free(void *ptr)
     {
       pthread_mutex_lock(&g_lock);
       block = ptr_to_block(ptr);
+      block->is_free = true;
       insert_sort(block);
       merge_free_blocks(block);
       pthread_mutex_unlock(&g_lock);

@@ -20,7 +20,7 @@ SRC:=		\
 		utils.c \
 
 CC:=		gcc
-CFLAGS:=	-W -Wall -Wextra -fPIC -pthread
+CFLAGS:=	-W -Wall -Wextra -fPIC -pthread -g
 LDFLAGS:=	-shared
 SRC:=		$(addprefix $(SRCDIR), $(SRC))
 OBJ:=		$(SRC:.c=.o)

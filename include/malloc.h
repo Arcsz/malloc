@@ -28,6 +28,7 @@ typedef struct		s_node
   size_t		size;
   struct s_node		*next;
   struct s_node		*prev;
+  bool			is_free;
 }			t_node;
 
 extern pthread_mutex_t	g_lock;
