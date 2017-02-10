@@ -40,5 +40,6 @@ void			show_alloc_mem();
 t_node			*ptr_to_block(void *ptr);
 t_node			*get_block_at(t_node *block, size_t size);
 size_t			next_pow2(size_t size);
+t_node			*find_free_block(size_t size);
 
 #endif /* !MALLOC_H_ */

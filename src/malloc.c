@@ -38,26 +38,22 @@ static void	*get_free_block(size_t size)
 {
   t_node	*node;
 
-  node = g_free_blocks;
-  while (node)
+  node = find_free_block(size);
+  if (node)
     {
-      if (node->size >= size)
+      if (node->size - size >= HEADER_SIZE + MIN_BLOCK_SIZE)
+	split_block(node, size);
+      else
 	{
-	  if (node->size - size >= HEADER_SIZE + MIN_BLOCK_SIZE)
-	    split_block(node, size);
-	  else
-	    {
-	      if (node->prev)
-	      	node->prev->next = node->next;
-	      if (node->next)
-	      	node->next->prev = node->prev;
-	      if (node == g_free_blocks)
-		g_free_blocks = NULL;
-	    }
-	  node->is_free = false;
-	  return (node + 1);
+	  if (node->prev)
+	    node->prev->next = node->next;
+	  if (node->next)
+	    node->next->prev = node->prev;
+	  if (node == g_free_blocks)
+	    g_free_blocks = NULL;
 	}
-      node = node->next;
+      node->is_free = false;
+      return (node + 1);
     }
   return (NULL);
 }

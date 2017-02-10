@@ -51,3 +51,22 @@ void		show_alloc_mem()
       cur_ptr = get_block_at(cur_ptr, cur_ptr->size);
     }
 }
+
+t_node		*find_free_block(size_t size)
+{
+  t_node	*node;
+  t_node	*smallest;
+
+  node = g_free_blocks;
+  smallest = NULL;
+  while (node)
+    {
+      if (node->size >= size &&
+	  (smallest == NULL || node->size < smallest->size))
+	{
+	  smallest = node;
+	}
+      node = node->next;
+    }
+  return (smallest);
+}
