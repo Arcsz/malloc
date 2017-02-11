@@ -32,16 +32,59 @@ static bool	realloc_free_space(t_node *block, size_t size)
   return (false);
 }
 
+static t_node	*get_next_free(t_node *block)
+{
+  t_node	*node;
+
+  node = block;
+  while (node <= g_last)
+    {
+      if (node->is_free)
+	return (node);
+      node = get_block_at(node, node->size);
+    }
+  return (NULL);
+}
+
+static void	create_new_block(t_node *block, size_t size)
+{
+  t_node	*new_block;
+  t_node	*next;
+  t_node	*prev;
+
+  pthread_mutex_lock(&g_lock);
+  next = get_next_free(block);
+  prev = (next) ? next->prev : NULL;
+  new_block = get_block_at(block, size);
+  new_block->size = block->size - size - HEADER_SIZE;
+  new_block->prev = prev;
+  new_block->next = next;
+  new_block->is_free = true;
+  if (prev)
+    prev->next = new_block;
+  if (next)
+    next->prev = new_block;
+  if (!g_free_blocks)
+    g_free_blocks = new_block;
+  block->size = size;
+  pthread_mutex_unlock(&g_lock);
+}
+
 void		*realloc(void* ptr, size_t size)
 {
   void		*new_ptr;
   t_node	*node;
 
+  size = next_pow2(size);
   if (!ptr)
     return (malloc(size));
   node = ptr_to_block(ptr);
   if (node->size >= size)
-    return (ptr);
+    {
+      if (node->size - size >= HEADER_SIZE + MIN_BLOCK_SIZE)
+	create_new_block(node, size);
+      return (ptr);
+    }
   if (realloc_free_space(node, size))
     new_ptr = ptr;
   else
