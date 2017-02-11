@@ -32,29 +32,27 @@ static bool	realloc_free_space(t_node *block, size_t size)
   return (false);
 }
 
-static t_node	*get_next_free(t_node *block)
+static t_node	*get_prev_free(t_node *block)
 {
   t_node	*node;
 
-  node = block;
-  while (node <= g_last)
+  node = g_free_blocks;
+  while (node && node->next && node->next < block)
     {
-      if (node->is_free)
-	return (node);
-      node = get_block_at(node, node->size);
+      node = node->next;
     }
-  return (NULL);
+  return (node);
 }
 
 static void	create_new_block(t_node *block, size_t size)
 {
   t_node	*new_block;
-  t_node	*next;
   t_node	*prev;
+  t_node	*next;
 
   pthread_mutex_lock(&g_lock);
-  next = get_next_free(block);
-  prev = (next) ? next->prev : NULL;
+  prev = get_prev_free(block);
+  next = (prev) ? prev->next : NULL;
   new_block = get_block_at(block, size);
   new_block->size = block->size - size - HEADER_SIZE;
   new_block->prev = prev;

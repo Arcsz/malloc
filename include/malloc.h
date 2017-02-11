@@ -19,7 +19,7 @@
 
 # define HEADER_SIZE sizeof(t_node)
 # define SBRK_FAILED (void*)-1
-# define MIN_BLOCK_SIZE 1
+# define MIN_BLOCK_SIZE 2
 # define PAGE_NUMBER 32
 # define PAGE_MAX 64
 
